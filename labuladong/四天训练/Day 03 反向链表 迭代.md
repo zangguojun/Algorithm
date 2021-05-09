@@ -1,0 +1,242 @@
+##   [如何k个一组反转链表](http://mp.weixin.qq.com/s?__biz=MzAxODQxMDM0Mw==&mid=2247484597&idx=1&sn=c603f1752e33cb2701e371d84254aee2&chksm=9bd7fabdaca073abd512d8fff18016c9092ede45fed65c307852c65a2026d8568ee294563c78&scene=21#wechat_redirect)   递归方式
+
+### 〇、链表实现
+
+```python
+class Node:
+    def __init__(self,item):
+        self.item = item
+        self.next = None
+
+class SingleNode:
+    def __init__(self):
+        self._head = None
+
+    def is_empty(self):
+        return self._head is None
+
+    def length(self):
+        count = 0
+        cur = self._head
+        while cur is not None:
+            count += 1
+            cur = cur.next
+        return count
+
+    def traverse(self):
+        cur = self._head
+        while cur is not None:
+            yield cur.item
+            cur = cur.next
+
+    def appendleft(self,item):
+        node = Node(item)
+        node.next = self._head
+        self._head = node
+        
+    def append(self,item):
+        node = Node(item)
+        if self.is_empty():
+            self._head = node
+        else:
+            cur = self._head
+            while cur.next is not None:
+                cur = cur.next
+            cur.next = node    
+
+    def insert(self,index,item):
+        if index <= 0:
+            self.appendleft(item)
+        elif index >= self.length():
+            self.append(item)
+        else:            
+            node = Node(item)
+            cur = self._head
+            for i in range(index-1):
+                cur = cur.next
+            node.next = cur.next
+            cur.next = node
+    def remove(self,item):
+        cur = self._head
+        pre = None
+        while cur is not None:
+            if cur.item == item:
+                if pre is None:
+                    self._head = cur.next
+                else:
+                    pre.next = cur.next
+                return True
+            else:
+                pre = cur
+                cur = cur.next
+        return False
+    
+    def find(self,item):
+        return item in self.traverse()
+        
+ln = SingleNode()
+ln.appendleft(2)
+ln.appendleft(1)
+ln.append(3)
+ln.append(4)
+for i in ln.traverse():
+    print(i)
+```
+
+#### 一、递归反转整个链表
+
+```python
+@staticmethod
+def reverse(head):
+    pre = None
+    cur = head
+    nxt = head
+    while cur is not None:
+        nxt = cur.next
+        cur.next = pre
+
+        pre = cur
+        cur = nxt
+    return pre
+
+print('整体反转后：')
+ln._head = SingleNode.reverse(ln._head)
+
+for i in ln.traverse():
+    print(i)
+```
+
+#### 二、反转在节点B之前的链表
+
+```python
+@staticmethod
+def reverse2another(head,another):
+    pre = None
+    cur = head
+    nxt = head
+    while cur.item != another.item:
+    #while cur != another:
+        if cur == head:
+            rear = cur
+        nxt = cur.next
+        cur.next = pre
+
+        pre = cur
+        cur = nxt
+    rear.next = nxt
+    return pre
+
+print('反转到另一节点后：（例：Node(3)）')
+ln._head = SingleNode.reverse2another(ln._head,Node(3))
+
+for i in ln.traverse():
+    print(i)
+```
+
+
+
+#### 三、反转链表前 N 个节点
+
+```python
+@staticmethod
+def reverseN(head,n):
+    pre = None
+    cur = head
+    nxt = head
+    for i in range(n):
+        if cur == head:
+            rear = cur
+        nxt = cur.next
+        cur.next = pre
+
+        pre = cur
+        cur = nxt
+    rear.next = nxt
+    return pre
+
+print('反转前n个后：（例：3）')
+ln._head = SingleNode.reverseN(ln._head,3)
+
+for i in ln.traverse():
+    print(i)
+```
+
+
+
+#### 四、反转链表的一部分
+
+```python
+@staticmethod
+def reverseBetween(head,m,n):
+    pre = None
+    cur = head
+    nxt = head
+    for i in range(m-1):
+        nxt = cur.next
+        pre = cur
+        cur = nxt
+    for i in range(n):
+        print(pre.item,cur.item,nxt.item)
+        if i == 0:
+            before = pre
+            rear = cur
+        nxt = cur.next
+        cur.next = pre
+
+        pre = cur
+        cur = nxt
+    rear.next = nxt
+    before.next = pre
+    return head
+
+print('反转[m,n]后：（例：[2,4]）')
+
+ln._head = SingleNode.reverseBetween(ln._head,2,4)
+
+for i in ln.traverse():
+    print(i)
+```
+
+#### 五、K个每组反转链表
+
+```python
+@staticmethod
+def reverseKGroup(head,k):
+    a = b = head
+    for i in range(k):
+        if b is None:
+            return head
+        b = b.next
+    if b is None:
+        last = SingleNode.reverse(a)
+    else:
+        last = SingleNode.reverse2another(a,b)
+    a.next = SingleNode.reverseKGroup(b,k)
+    return last
+
+print('k个每组反转后：（例：2）')
+
+ln._head = SingleNode.reverseKGroup(ln._head,2)
+
+for i in ln.traverse():
+    print(i)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
